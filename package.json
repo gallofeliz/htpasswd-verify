@@ -21,5 +21,6 @@
     "apache-md5": "^1.1.7",
     "bcryptjs": "^2.4.3",
     "safe-compare": "^1.1.4"
-  }
+  },
+  "types": "./index.d.ts"
 }
