@@ -22,7 +22,27 @@ Support Apache generated credentials
         console.log('Oh yeah !')
     }
 
+    if (validator.verifyCredentials(username, password, 'admin', '$apr1$GZ650zxv$99/Dg0Y6os0zquEMaYoJx1')) {
+        console.log('Oh yeah !')
+    }
+
     if (validator.verifyUsername(username, 'admin') & validator.verifyPassword(password, '$apr1$GZ650zxv$99/Dg0Y6os0zquEMaYoJx1')) {
+        console.log('Oh yeah !')
+    }
+
+    const listValidator = new HtpasswdValidator({
+        admin: '$apr1$GZ650zxv$99/Dg0Y6os0zquEMaYoJx1',
+        bill: '5G1OI2SwmK4v6'
+    })
+
+    // or
+
+    const listValidator = new HtpasswdValidator([
+        'admin:$apr1$GZ650zxv$99/Dg0Y6os0zquEMaYoJx1',
+        'bill:5G1OI2SwmK4v6'
+    ])
+
+    if (listValidator.verify(username, password)) {
         console.log('Oh yeah !')
     }
 ```

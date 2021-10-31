@@ -14,7 +14,29 @@ const credentials = [
 const validator = new HtpasswdValidator
 
 for (const credential of credentials) {
-    assert(validator.verifyCredentials(username, originalPassword, credential), credential)
+    assert(validator.verifyCredentials(username, originalPassword, credential))
+    assert(validator.verifyCredentials(username, 'bipop', credential) === false)
+
+    const split = credential.split(':')
+
+    assert(validator.verifyCredentials(username, originalPassword, split[0], split[1]))
+    assert(validator.verifyPassword(originalPassword, split[1]))
+    assert(validator.verifyUsername(username, split[0]))
 }
+
+const dictValidator = new HtpasswdValidator({
+    'bill': '5G1OI2SwmK4v7',
+    'superAdmin27!': '$apr1$GZ650zxv$99/Dg0Y6os0zquEMaYoJx1'
+})
+
+const listValidator = new HtpasswdValidator([
+    'bill:5G1OI2SwmK4v7',
+    'superAdmin27!:$apr1$GZ650zxv$99/Dg0Y6os0zquEMaYoJx1'
+])
+
+assert(dictValidator.verify(username, originalPassword))
+assert(listValidator.verify(username, originalPassword))
+assert(dictValidator.verify('charles', originalPassword) === false)
+assert(dictValidator.verify(username, 'iAmHacker78!') === false)
 
 console.log('Ok !')

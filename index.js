@@ -5,6 +5,17 @@ const md5 = require("apache-md5");
 const crypt = require("apache-crypt");
 
 module.exports = class HtpasswdValidator {
+    constructor(listOrDict) {
+        if (Array.isArray(listOrDict)) {
+            listOrDict = listOrDict.reduce((dict, userpassHash) => {
+                const split = this.splitUserPasshash(userpassHash)
+                return {...dict, [split[0]]: split[1]}
+            }, {})
+        }
+
+        this.dict = listOrDict || {}
+    }
+
     verifyUsername(inputUsername, username) {
         return safeCompare(inputUsername, username)
     }
@@ -31,9 +42,32 @@ module.exports = class HtpasswdValidator {
         return safeCompare(inputPassword, passwordHash)
     }
 
-    verifyCredentials(inputUsername, inputPassword, userpassHash) {
-        const [username, ...passwordHashParts] = userpassHash.split(':')
+    verifyCredentials(inputUsername, inputPassword, userpassHashOrUsername, passwordHash) {
+        let username
 
-        return this.verifyUsername(inputUsername, username) & this.verifyPassword(inputPassword, passwordHashParts.join(':'))
+        if (passwordHash) {
+            username = userpassHashOrUsername
+        } else {
+            const split = this.splitUserPasshash(userpassHashOrUsername)
+            username = split[0]
+            passwordHash = split[1]
+        }
+
+        return !!(this.verifyUsername(inputUsername, username) & this.verifyPassword(inputPassword, passwordHash))
+    }
+
+    verify(inputUsername, inputPassword) {
+        if (!this.dict[inputUsername]) {
+            return false // Add safe time ?
+        }
+
+        return this.verifyPassword(inputPassword, this.dict[inputUsername])
+    }
+
+    splitUserPasshash(userpassHash) {
+        const [username, ...passwordHashParts] = userpassHash.split(':')
+        const passwordHash = passwordHashParts.join(':')
+
+        return [username, passwordHash]
     }
 }
