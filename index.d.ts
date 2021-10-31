@@ -1,5 +1,5 @@
-export class HtpasswdValidator {
-    constructor(listOrDict: string[] | Record<string, string>)
+export default class HtpasswdValidator {
+    constructor(listOrDict?: string[] | Record<string, string>)
     verifyUsername(inputUsername: string, username: string): boolean
     verifyPassword(inputPassword: string, passwordHash: string): boolean
     verifyCredentials(inputUsername: string, inputPassword: string, userpassHash: string): boolean
